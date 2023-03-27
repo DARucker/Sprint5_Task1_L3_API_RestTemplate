@@ -2,8 +2,8 @@ package cat.itacademy.barcelonactiva.rucker.dario.s05.t01.n03.service;
 
 
 import cat.itacademy.barcelonactiva.rucker.dario.s05.t01.n03.dto.Flowerdto;
-import cat.itacademy.barcelonactiva.rucker.dario.s05.t01.n03.dto.FlowerdtoList;
-import lombok.AllArgsConstructor;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,33 +11,43 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ApiRestService {
 
     private final RestTemplate restTemplate;
 
-    public List<Flowerdto> listAll() {
-        //List<Flowerdto> allFlowerApi = new ArrayList<>();
-        ResponseEntity<List<FlowerdtoList>> responseEntity = restTemplate
-                .getForEntity("http://localhost:9001/flower/getAll", Flowerdto.class);
-
-        Flowerdto flowerdto = responseEntity.getBody();
-        allFlowerApi.add(flowerdto);
-        return allFlowerApi;
-    }
-
-    public Flowerdto findById(int id) throws RestClientException {
-
-        Flowerdto flowerdto = new Flowerdto();
-        ResponseEntity<Flowerdto> responseEntity = restTemplate
-                .getForEntity("http://localhost:9001/flower/getOne/" + id, Flowerdto.class);
-        flowerdto = responseEntity.getBody();
-        HttpStatusCode statusCode = responseEntity.getStatusCode();
+    public Flowerdto findById(int id)  {
+        String url = "http://localhost:9001/flower/getOne/";
+        Flowerdto flowerdto = restTemplate.getForEntity( url + id, Flowerdto.class)
+                .getBody();
         return flowerdto;
     }
 
+    public List<Flowerdto> listAll() {
+        String url = "http://localhost:9001/flower/getAll";
+        Flowerdto[] flowersDtoArrary = restTemplate.getForObject(url, Flowerdto[].class);
+        return Arrays.asList(flowersDtoArrary);
+    }
+
+
+    public ResponseEntity<Flowerdto> create(Flowerdto flowerdto) {
+        String url = "http://localhost:9001/flower/add";
+        ResponseEntity<Flowerdto> flowerdtoPost = restTemplate.postForEntity(url, flowerdto, Flowerdto.class);
+        return flowerdtoPost;
+    }
+
+    public void update(Flowerdto flowerdto, int id) {
+        String url = "http://localhost:9001/flower/update/";
+        restTemplate.put(url + id, flowerdto, Flowerdto.class);
+
+    }
+
+    public void delete(int id) {
+        String url = "http://localhost:9001/flower/delete/";
+        restTemplate.delete(url+id);
+    }
 }
-//  +flowerdto.getId()

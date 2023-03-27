@@ -12,9 +12,9 @@ public class S05T01N03RuckerDarioApplication {
 		SpringApplication.run(S05T01N03RuckerDarioApplication.class, args);
 	}
 
-	@Bean
+/*	@Bean
 	public RestTemplate restTemplate(){
 		return new RestTemplate();
-	}
+	}*/
 
 }
